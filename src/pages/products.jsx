@@ -1,19 +1,25 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import CardProducts from "../components/Fragments/CardProducts";
 import Button from "../components/Elements/Button";
-import Counter from "../components/Fragments/Counter";
 import { useEffect, useState, useRef } from "react";
-import { getProducts } from "../services/productService";
+import { getProducts } from "../services/product.service";
+import { getUsername } from "../services/auth.service";
 
-const email = localStorage.getItem("email");
+const token = localStorage.getItem("token");
 
 function ProductsPage() {
   const [cart, setCart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [products, setProducts] = useState([]);
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     setCart(JSON.parse(localStorage.getItem("cart")) || []);
   }, []);
+
+  useEffect(() => {
+    setUsername(getUsername(token));
+  });
 
   useEffect(() => {
     getProducts((data) => {
@@ -34,8 +40,7 @@ function ProductsPage() {
   }, [cart, products]);
 
   const handleLogout = () => {
-    localStorage.removeItem("email");
-    localStorage.removeItem("password");
+    localStorage.removeItem("token");
     localStorage.removeItem("cart");
     window.location.href = "/login";
   };
@@ -66,7 +71,7 @@ function ProductsPage() {
   return (
     <>
       <div className="flex px-10 h-20 justify-end items-center text-white bg-gray-700">
-        <p className="text-lg font-bold">{email}</p>
+        <p className="text-lg font-bold">{username}</p>
         <Button variant="bg-red-700 ml-5" onClick={handleLogout}>
           Logout
         </Button>
