@@ -1,25 +1,18 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import CardProducts from "../components/Fragments/CardProducts";
 import Button from "../components/Elements/Button";
 import { useEffect, useState, useRef } from "react";
 import { getProducts } from "../services/product.service";
-import { getUsername } from "../services/auth.service";
-
-const token = localStorage.getItem("token");
+import useLogin from "../hooks/useLogin";
 
 function ProductsPage() {
   const [cart, setCart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [products, setProducts] = useState([]);
-  const [username, setUsername] = useState("");
+  const username = useLogin();
 
   useEffect(() => {
     setCart(JSON.parse(localStorage.getItem("cart")) || []);
   }, []);
-
-  useEffect(() => {
-    setUsername(getUsername(token));
-  });
 
   useEffect(() => {
     getProducts((data) => {
@@ -70,8 +63,16 @@ function ProductsPage() {
 
   return (
     <>
-      <div className="flex px-10 h-20 justify-end items-center text-white bg-gray-700">
-        <p className="text-lg font-bold">{username}</p>
+      <div className="flex px-10 h-20 justify-between items-center text-white bg-gray-700">
+        <a className="text-lg font-bold" href="/profile">
+          Welcome, {""}
+          {username
+            ? username
+                .split(" ")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ")
+            : ""}
+        </a>
         <Button variant="bg-red-700 ml-5" onClick={handleLogout}>
           Logout
         </Button>

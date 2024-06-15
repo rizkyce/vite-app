@@ -18,13 +18,23 @@ function FormLogin() {
       password: event.target.password.value,
     };
 
+    if (data.username === "" || data.password === "") {
+      toast.error("Please fill username and password");
+      return;
+    }
+
     login(data, (status, res) => {
       if (status) {
         localStorage.setItem("token", res);
         window.location.href = "/products";
       } else {
         // setLoginStatus(res.response.data);
-        toast.error(res.response.data);
+        toast.error(
+          res.response.data
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")
+        );
       }
     });
   };
@@ -37,7 +47,7 @@ function FormLogin() {
 
   return (
     <form onSubmit={handleLogin}>
-      <Toaster position="top-right" richColors />
+      <Toaster position="top-center" richColors />
       <InputForm
         id="username"
         label="Username"
